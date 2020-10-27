@@ -1,20 +1,17 @@
-import re
-
 with open("data_file.txt", "r+") as file:
     data = file.read()
     file.close()
 
 replace_dict = {
-    " oraz ": r"\si\s",
-    " i ": r"\soraz\s",
-    " prawie nigdy ": r"\snigdy\s",
-    " czemu ": r"\sdlaczego\s"
+    " i ": " oraz ",
+    " oraz ": " i ",
+    " nigdy ": " prawie nigdy ",
+    " dlaczego ": " czemu "
 }
 
-
-for word in replace_dict.keys():
-    output_data = replace_dict[word].sub(r"/{}".format(group), replace_dict[group])
+for word in replace_dict:
+    data = data.replace(word, replace_dict[word])
 
 with open("data_file_out.txt", "w+") as file:
-    file.write(output_data)
+    file.write(data)
     file.close()
