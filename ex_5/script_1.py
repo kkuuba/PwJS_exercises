@@ -1,69 +1,35 @@
-import xml.dom.minidom
-import xml.sax
+import math
 
 
-class BookHandler(xml.sax.ContentHandler):
-    def __init__(self):
-        self.CurrentData = ""
-        self.title = ""
-        self.author = ""
-        self.year = ""
-        self.tags = ""
+class Complex:
+    def __init__(self, real, img):
+        self.real = real
+        self.img = img
+        self.module = None
+        self.angle = None
+        self._convert_to_polar()
 
-    # Call when an element starts
-    def startElement(self, tag, attributes):
-        self.CurrentData = tag
-        if tag == "book":
-            print("***BOOKS***")
-        if tag == "tags":
-            tag = attributes["tag"]
-            print("Tag: ", tag)
+    def _convert_to_polar(self):
+        self.module = math.hypot(self.real, self.img)
+        self.angle = math.atan2(self.real, self.img)
 
-    # Call when an elements ends
-    def endElement(self, tag):
-        if self.CurrentData == "title":
-            print("Title: ", self.title)
-        elif self.CurrentData == "author":
-            print("Author: ", self.author)
-        elif self.CurrentData == "year":
-            print("Year: ", self.year)
-        self.CurrentData = ""
+    def show_complex(self):
+        print(complex(self.real, self.img))
 
-    # Call when a character is read
-    def characters(self, content):
-        if self.CurrentData == "title":
-            self.title = content
-        elif self.CurrentData == "author":
-            self.author = content
-        elif self.CurrentData == "year":
-            self.year = content
-        elif self.CurrentData == "tags":
-            self.tags = content
+    @staticmethod
+    def add(complex_1, complex_2):
+        return Complex(complex_1.real + complex_2.real, complex_1.img + complex_2.img)
 
+    @staticmethod
+    def subtract(complex_1, complex_2):
+        return Complex(complex_1.real - complex_2.real, complex_1.img - complex_2.img)
 
-doc = xml.dom.minidom.parse("xml_file.xml")
+    @staticmethod
+    def multiply(complex_1, complex_2):
+        result = complex(complex_1.real, complex_1.img) * complex(complex_2.real, complex_2.img)
+        return Complex(result.real, result.imag)
 
-print(doc.nodeName)
-print(doc.firstChild.tagName)
-
-tags = doc.getElementsByTagName("tags")
-for tag in tags:
-    print(tag.getAttribute("tag"))
-
-new_tag = doc.createElement("tags")
-new_tag.setAttribute("tag", "story_for_kids")
-doc.firstChild.appendChild(new_tag)
-print("\n")
-
-tags = doc.getElementsByTagName("tags")
-for tag in tags:
-    print(tag.getAttribute("tag"))
-
-with open('xml_file_modified.xml', 'w') as f:
-    f.write(doc.toxml())
-
-parser = xml.sax.make_parser()
-parser.setFeature(xml.sax.handler.feature_namespaces, 0)
-Handler = BookHandler()
-parser.setContentHandler(Handler)
-parser.parse("xml_file_modified.xml")
+    @staticmethod
+    def divide(complex_1, complex_2):
+        result = complex(complex_1.real, complex_1.img) / complex(complex_2.real, complex_2.img)
+        return Complex(result.real, result.imag)
